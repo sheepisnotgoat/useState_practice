@@ -1,23 +1,66 @@
-import logo from './logo.svg';
-import './App.css';
+import { useState } from "react";
+import "./App.css";
+function List({ listContent }) {
+  if (listContent.length > 0) {
+    return (
+      <ul>
+        {listContent.map((content, index) => (
+          <li key={index}>{content}</li>
+        ))}
+      </ul>
+    );
+  }
+}
 
 function App() {
+  const [today, setToday] = useState({
+    time: new Date().toLocaleTimeString(),
+    date: new Date().toDateString(),
+  });
+
+  const [list, setList] = useState({
+    listContents: [],
+    listContent: "",
+  });
+
+  setInterval(tick, 1000);
+  function tick() {
+    setToday(() => {
+      return {
+        time: new Date().toLocaleTimeString(),
+        date: new Date().toDateString(),
+      };
+    });
+  }
+
+  function handleSubmit(e) {
+    e.preventDefault();
+    setList((prevList) => {
+      return {
+        listContent: "",
+        listContents: [prevList.listContent, ...prevList.listContents],
+      };
+    });
+  }
+  function handleChange(e) {
+    setList((prevList) => {
+      prevList.listContent = e.target.value;
+      return prevList;
+    });
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <h1>
+        <u>Local Clock </u>
+      </h1>
+      <h2>{today.time}</h2>
+      <h2>{today.date}</h2>
+      <form onSubmit={handleSubmit}>
+        <input type="text" name="randomThought" onChange={handleChange}></input>
+        <input type="submit" value="Submit"></input>
+      </form>
+      <List listContent={list.listContents} />
     </div>
   );
 }
